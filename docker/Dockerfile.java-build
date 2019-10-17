@@ -1,0 +1,74 @@
+ARG JAVA_MAIJOR_VERSION="11"
+ARG JAVA_MINOR_REVISON="0.4"
+ARG JAVA_BUILD_NUMBER="11"
+ARG ESUM="90c33cf3f2ed0bd773f648815de7347e69cfbb3416ef3bf41616ab1c4aa0f5a8"
+ARG JAVA_MAIJOR_MINOR_REVISION="${JAVA_MAIJOR_VERSION}.${JAVA_MINOR_REVISON}"
+ARG JAVA_VERSION="${JAVA_MAIJOR_MINOR_REVISION}_${JAVA_BUILD_NUMBER}"
+ARG JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION}-openjdk-amd64
+
+FROM buildpack-deps:buster-curl AS downloader
+
+ARG JAVA_MAIJOR_VERSION
+ARG JAVA_MINOR_REVISON
+ARG JAVA_MAIJOR_MINOR_REVISION
+ARG JAVA_BUILD_NUMBER
+ARG JAVA_VERSION
+ARG JAVA_URL="https://api.adoptopenjdk.net/v2/binary/releases/openjdk${JAVA_MAIJOR_VERSION}?openjdk_impl=hotspot&os=linux&type=jdk&release=latest&heap_size=normal&arch=x64"
+ARG ESUM
+ARG JAVA_HOME
+
+ENV JAVA_HOME ${JAVA_HOME}
+RUN apt-get update -qq && apt-get upgrade -qqy \
+ && apt-get install -qqy --no-install-recommends curl ca-certificates-java\
+ && apt-get autoremove --purge  -qqy \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/* \
+ && curl -Lso /tmp/openjdk.tar.gz ${JAVA_URL} \
+ && sha256sum /tmp/openjdk.tar.gz \
+ && mkdir -p ${JAVA_HOME} \
+ && cd ${JAVA_HOME} \
+ && echo "${ESUM}  /tmp/openjdk.tar.gz" | sha256sum -c - \
+ && tar -xf /tmp/openjdk.tar.gz \
+ && jdir=$(dirname $(dirname $(find ${JAVA_HOME} -name javac))) \
+ && mv ${jdir}/* ${JAVA_HOME} \
+ && rm -rf ${jdir} /tmp/openjdk.tar.gz \
+ && rm ${JAVA_HOME}/lib/security/cacerts \
+ && cp -p /etc/ssl/certs/java/cacerts $JAVA_HOME/lib/security/cacerts
+
+
+FROM docker-mecab:latest
+
+LABEL Kenji Saito "ken-yo@mbr.nifty.com"
+
+ARG JAVA_VERSION
+ARG JAVA_HOME
+
+ENV LANG=UTF-8
+ENV LANGUAGE=UTF-8
+ENV JAVA_HOME="${JAVA_HOME}"
+ENV PATH "$JAVA_HOME/bin:$PATH"
+
+COPY --from=downloader ${JAVA_HOME} ${JAVA_HOME}
+
+RUN apt-get update -qq \
+ && apt-get upgrade -qqy \
+ && apt-get autoremove --purge  -qqy \
+ && for tool_path in $JAVA_HOME/bin/*; do \
+          tool=`basename $tool_path` \
+       && update-alternatives --install /usr/bin/$tool $tool $tool_path 10000 \
+       && update-alternatives --set $tool $tool_path; \
+    done \
+ && wget "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7NHo1bEJxd0RnSzg" -O mecab-java-0.996.tar.gz \
+ && tar xf mecab-java-0.996.tar.gz \
+ && cd mecab-java-0.996 \
+ && mv Makefile Makefile.bak \
+ && cat Makefile.bak | sed -e "s/java-6-openjdk/java-${JAVA_VERSION}-openjdk-amd64/g" | sed -e "s/\$(JAVAC)/\$(JAVAC) -encoding UTF-8/g" > Makefile \
+ && make \
+ && cp -p libMeCab.so /usr/lib \
+ && cp -p libMeCab.so /work \
+ && cp -p MeCab.jar /work \
+ && cd .. \
+ && rm -rf mecab-java-0.996.tar.gz \
+ && apt-get autoremove --purge -y make clang-9 \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
