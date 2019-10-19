@@ -1,0 +1,6 @@
+logging:
+  level:
+    root:
+      INFO
+    com.github.poad.examples.mecab.service.MeCabService: TRACE
+    com.github.poad.examples.mecab.morphogical.MeCab: TRACE
