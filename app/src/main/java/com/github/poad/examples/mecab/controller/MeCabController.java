@@ -19,7 +19,7 @@ public class MeCabController {
 
     @GetMapping
     public String parse(@RequestParam(name = "text", required = true) String text) {
-//        service.parseToNode(text);
+        service.parseToNode(text);
 
         return service.parse(text);
     }

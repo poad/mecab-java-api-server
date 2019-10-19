@@ -1,6 +1,5 @@
 ```
-docker build --rm -f docker/Dockerfile -t docker-mecab:latest .
-docker build --rm -t docker-java-mecab:latest -f docker/Dockerfile.java-build .
+docker build --rm -f docker/Dockerfile -t docker-java-mecab:latest .
 ./gradlew jibDockerBuild
 docker run --rm -it -p 8080:8080 --name mecab -d mecab-java-api-server
 ```

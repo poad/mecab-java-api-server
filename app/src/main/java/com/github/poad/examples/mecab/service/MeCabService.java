@@ -20,9 +20,7 @@ public class MeCabService implements MorphologicalAnalysisService {
     }
 
     public String parse(String text) {
-        String parsed = meCab.parse(text);
-        logger.trace(parsed);
-        return parsed;
+        return meCab.parse(text);
     }
 
     public void parseToNode(String text) {
