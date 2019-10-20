@@ -9,6 +9,10 @@ public class AnalyzeRequest implements Serializable {
     @NotBlank
     private final String text;
 
+    public AnalyzeRequest() {
+        this(null);
+    }
+
     public AnalyzeRequest(String text) {
         this.text = text;
     }

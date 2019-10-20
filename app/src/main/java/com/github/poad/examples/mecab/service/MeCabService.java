@@ -1,33 +1,51 @@
 package com.github.poad.examples.mecab.service;
 
-import com.github.poad.examples.mecab.morphogical.MeCab;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.chasen.mecab.Lattice;
 import org.chasen.mecab.Model;
 import org.chasen.mecab.Node;
 import org.chasen.mecab.Tagger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class MeCabService implements MorphologicalAnalysisService {
 
     private static final Logger logger = LogManager.getLogger(MeCabService.class);
 
-    private final MeCab meCab;
-    public MeCabService(@Autowired MeCab meCab) {
-        this.meCab = meCab;
-    }
+    @Override
+    public List<AnalyzeResult> parseToNode(String text) {
+        List<AnalyzeResult> results = new ArrayList<>();
+        Model model = new Model();
+        Tagger tagger = model.createTagger();
 
-    public String parse(String text) {
-        return meCab.parse(text);
-    }
+        Lattice lattice = model.createLattice();
 
-    public void parseToNode(String text) {
-        Node node = meCab.parseToNode(text);
-        for (;node != null; node = node.getNext()) {
-            logger.trace(node.getSurface() + "\t" + node.getFeature());
+        lattice.set_sentence(text);
+        if (tagger.parse(lattice)) {
+            logger.trace(lattice.toString());
+            for (Node node = lattice.bos_node(); node != null; node = node.getNext()) {
+                String[] attributes = node.getFeature().split(",");
+                List<String> pos = IntStream.range(0, 6)
+                        .mapToObj(i -> attributes[i])
+                        .filter(attr -> !attr.equals("*"))
+                        .collect(Collectors.toList());
+                List<String> word = IntStream.range(6, attributes.length)
+                        .mapToObj(i -> attributes[i])
+                        .collect(Collectors.toList());
+                results.add(new AnalyzeResult(
+                        node.getSurface(),
+                        new AnalyzeResult.Attributes(pos, word))
+                );
+                logger.trace(node.getSurface() + "\t" + node.getFeature());
+            }
         }
-        meCab.modelParse(text);
+        return results;
     }
 }

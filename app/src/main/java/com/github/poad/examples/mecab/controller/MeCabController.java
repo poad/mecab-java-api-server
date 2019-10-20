@@ -1,15 +1,17 @@
 package com.github.poad.examples.mecab.controller;
 
+import com.github.poad.examples.mecab.model.AnalyzeRequest;
+import com.github.poad.examples.mecab.model.AnalyzeResponse;
 import com.github.poad.examples.mecab.service.MeCabService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/mecab", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class MeCabController {
     private final MeCabService service;
 
@@ -18,9 +20,25 @@ public class MeCabController {
     }
 
     @GetMapping
-    public String parse(@RequestParam(name = "text", required = true) String text) {
-        service.parseToNode(text);
+    public AnalyzeResponse analyze(@RequestParam(name = "text") String text) {
+        return analyzeInternal(text);
+    }
 
-        return service.parse(text);
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public AnalyzeResponse analyze(@Valid @RequestBody AnalyzeRequest request) {
+        return analyzeInternal(request.getText());
+    }
+
+    private AnalyzeResponse analyzeInternal(String text) {
+        return new AnalyzeResponse(service.parseToNode(text).stream()
+                .filter(item -> !item.getKeyword().isBlank())
+                .map(item -> new AnalyzeResponse.Result(
+                        item.getKeyword(),
+                        new AnalyzeResponse.Result.Attributes(
+                                item.getAttributes().getPos(),
+                                item.getAttributes().getWord()
+                        )
+                ))
+                .collect(Collectors.toList()));
     }
 }
