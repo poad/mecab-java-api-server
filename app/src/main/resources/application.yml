@@ -4,3 +4,15 @@ logging:
       INFO
     com.github.poad.examples.mecab.service.MeCabService: TRACE
     com.github.poad.examples.mecab.morphogical.MeCab: TRACE
+management:
+  endpoints:
+    web:
+      exposure:
+#        include: "*"
+        include: "prometheus"
+
+#  metrics:
+#    export:
+#      cloudwatch:
+#        namespace: MeCabWebApi
+#        batchSize: 20
