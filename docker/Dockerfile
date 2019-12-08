@@ -10,7 +10,6 @@ USER root
 COPY docker/assets/mecab-0.996.tar.gz /tmp/mecab-0.996.tar.gz
 COPY docker/assets/mecab-ipadic-2.7.0-20070801.tar.gz /tmp/mecab-ipadic-2.7.0-20070801.tar.gz
 COPY docker/assets/mecab-jumandic-7.0-20130310.tar.gz /tmp/mecab-jumandic-7.0-20130310.tar.gz
-COPY docker/assets/unidic-mecab-2.1.2_src.zip /tmp/unidic-mecab-2.1.2_src.zip
 COPY docker/assets/mecab-java-0.996.tar.gz /tmp/mecab-java-0.996.tar.gz
 
 RUN apt-get update -qq \
@@ -45,6 +44,7 @@ RUN apt-get update -qq \
  && make \
  && make install \
  && cd .. \
+ && curl -SLo /tmp/unidic-mecab-2.1.2_src.zip "https://ja.osdn.net/frs/redir.php?m=iij&f=unidic%2F58338%2Funidic-mecab-2.1.2_src.zip" \
  && unzip unidic-mecab-2.1.2_src.zip \
  && cd unidic-mecab-2.1.2_src \
  && ./configure \
