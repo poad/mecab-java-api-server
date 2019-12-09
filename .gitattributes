@@ -1,4 +1,1 @@
-docker/assets/mecab-0.996.tar.gz filter=lfs diff=lfs merge=lfs -text
-docker/assets/mecab-ipadic-2.7.0-20070801.tar.gz filter=lfs diff=lfs merge=lfs -text
-docker/assets/mecab-java-0.996.tar.gz filter=lfs diff=lfs merge=lfs -text
-docker/assets/mecab-jumandic-7.0-20130310.tar.gz filter=lfs diff=lfs merge=lfs -text
+
