@@ -20,7 +20,7 @@ RUN apt-get update -qq \
  && sed -e "s/# ja_JP.UTF-8/ja_JP.UTF-8/g" /etc/locale.gen.bak | sed -e "s/# en_US.UTF-8/en_US.UTF-8/g" > /etc/locale.gen \
  && locale-gen \
  && update-locale LANG=ja_JP.UTF-8 \
- && curl -SLo mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE" \
+ && curl -sSLo mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE" \
  && tar xf mecab-0.996.tar.gz \
  && cd mecab-0.996 \
  && CC=clang++-9 CXX=clang++-9 ./configure --prefix=/usr --enable-utf8-only \
@@ -28,24 +28,10 @@ RUN apt-get update -qq \
  && make check \
  && make install \
  && cd .. \
- && curl -SLo mecab-ipadic-2.7.0-20070801.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM" \
+ && curl -sSLo mecab-ipadic-2.7.0-20070801.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM" \
  && tar xf mecab-ipadic-2.7.0-20070801.tar.gz \
  && cd mecab-ipadic-2.7.0-20070801 \
  && CC=clang++-9 CXX=clang++-9 ./configure --with-charset=utf8 \
- && make \
- && make install \
- && cd .. \
- && curl -SLo mecab-jumandic-7.0-20130310.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7X2pESGlLREpxdXM" \
- && tar xf mecab-jumandic-7.0-20130310.tar.gz \
- && cd mecab-jumandic-7.0-20130310 \
- && CC=clang++-9 CXX=clang++-9 ./configure --with-charset=utf8 \
- && make \
- && make install \
- && cd .. \
- && curl -SLo /tmp/unidic-mecab-2.1.2_src.zip "https://ja.osdn.net/frs/redir.php?m=iij&f=unidic%2F58338%2Funidic-mecab-2.1.2_src.zip" \
- && unzip unidic-mecab-2.1.2_src.zip \
- && cd unidic-mecab-2.1.2_src \
- && ./configure \
  && make \
  && make install \
  && cd / \
