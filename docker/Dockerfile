@@ -7,24 +7,20 @@ ENV LC_CTYPE ja_JP.UTF-8
 
 USER root
 
-COPY docker/assets/mecab-0.996.tar.gz /tmp/mecab-0.996.tar.gz
-COPY docker/assets/mecab-ipadic-2.7.0-20070801.tar.gz /tmp/mecab-ipadic-2.7.0-20070801.tar.gz
-COPY docker/assets/mecab-jumandic-7.0-20130310.tar.gz /tmp/mecab-jumandic-7.0-20130310.tar.gz
-COPY docker/assets/mecab-java-0.996.tar.gz /tmp/mecab-java-0.996.tar.gz
-
 RUN apt-get update -qq \
  && apt-get upgrade -qqy \
  && apt-get install --no-install-recommends -qqy locales curl unzip ca-certificates gnupg \
  && echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
  && echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-8 main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
  && echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-9 main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
- && curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
+ && curl -SL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
  && apt-get update -qq \
  && apt-get install -qqy --no-install-recommends clang-9 lld-9 make \
  && cp -p /etc/locale.gen /etc/locale.gen.bak \
  && sed -e "s/# ja_JP.UTF-8/ja_JP.UTF-8/g" /etc/locale.gen.bak | sed -e "s/# en_US.UTF-8/en_US.UTF-8/g" > /etc/locale.gen \
  && locale-gen \
  && update-locale LANG=ja_JP.UTF-8 \
+ && curl -SLo mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE" \
  && tar xf mecab-0.996.tar.gz \
  && cd mecab-0.996 \
  && CC=clang++-9 CXX=clang++-9 ./configure --prefix=/usr --enable-utf8-only \
@@ -32,12 +28,14 @@ RUN apt-get update -qq \
  && make check \
  && make install \
  && cd .. \
+ && curl -SLo mecab-ipadic-2.7.0-20070801.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM" \
  && tar xf mecab-ipadic-2.7.0-20070801.tar.gz \
  && cd mecab-ipadic-2.7.0-20070801 \
  && CC=clang++-9 CXX=clang++-9 ./configure --with-charset=utf8 \
  && make \
  && make install \
  && cd .. \
+ && curl -SLo mecab-jumandic-7.0-20130310.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7X2pESGlLREpxdXM" \
  && tar xf mecab-jumandic-7.0-20130310.tar.gz \
  && cd mecab-jumandic-7.0-20130310 \
  && CC=clang++-9 CXX=clang++-9 ./configure --with-charset=utf8 \
@@ -50,8 +48,9 @@ RUN apt-get update -qq \
  && ./configure \
  && make \
  && make install \
- && cd .. \
+ && cd / \
  && ln -s /usr/bin/clang++-9 /usr/bin/c++ \
+ && curl -SLo mecab-java-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7NHo1bEJxd0RnSzg" \
  && tar xf mecab-java-0.996.tar.gz \
  && cd mecab-java-0.996 \
  && mv Makefile Makefile.bak \
