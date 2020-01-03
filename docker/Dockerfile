@@ -1,4 +1,4 @@
-FROM poad/docker-openjdk11:zulu-buster
+FROM poad/docker-openjdk:11-zulu-buster
 
 WORKDIR /tmp
 
