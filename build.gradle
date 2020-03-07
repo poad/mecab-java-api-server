@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.2.4.RELEASE'
+        springBootVersion = '2.2.5.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -10,7 +10,7 @@ buildscript {
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:2.0.0"
+        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:2.1.0"
     }
 }
 
