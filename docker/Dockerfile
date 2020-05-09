@@ -1,6 +1,10 @@
 ARG LLVM_VERSION=10
+ARG DIST_VERSION_CODE_NAME=focal
 
-FROM poad/docker-openjdk:11-zulu-buster
+FROM poad/docker-openjdk:11-zulu-${DIST_VERSION_CODE_NAME}
+
+ARG LLVM_VERSION
+ARG DIST_VERSION_CODE_NAME
 
 WORKDIR /tmp
 
@@ -12,8 +16,8 @@ USER root
 RUN apt-get update -qq \
  && apt-get upgrade -qqy \
  && apt-get install --no-install-recommends -qqy locales curl unzip ca-certificates gnupg \
- && echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
- && echo "deb http://apt.llvm.org/buster/ llvm-toolchain-buster-${LLVM_VERSION} main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
+ && echo "deb http://apt.llvm.org/${DIST_VERSION_CODE_NAME}/ llvm-toolchain-${DIST_VERSION_CODE_NAME} main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
+ && echo "deb http://apt.llvm.org/${DIST_VERSION_CODE_NAME}/ llvm-toolchain-${DIST_VERSION_CODE_NAME}-${LLVM_VERSION} main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
  && curl -SL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
  && apt-get update -qq \
  && apt-get install -qqy --no-install-recommends clang-${LLVM_VERSION} lld-${LLVM_VERSION} make \

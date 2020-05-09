@@ -1,14 +1,7 @@
-buildscript {
-    repositories {
-        mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath "gradle.plugin.com.google.cloud.tools:jib-gradle-plugin:${jibVersion}"
-    }
+plugins {
+    id 'org.springframework.boot' version "${springBootVersion}" apply false
+    id "io.spring.dependency-management" version "${springDependencyManagementVersion}" apply false
+    id 'com.google.cloud.tools.jib' version "${jibVersion}" apply false
 }
 
 subprojects {
@@ -18,7 +11,8 @@ subprojects {
     group = 'com.github.poad.examples'
     version = '1.0.0'
 
-    sourceCompatibility = 11
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 
     repositories {
         // Use jcenter for resolving dependencies.
@@ -46,7 +40,7 @@ project(":app") {
     }
 
     dependencies {
-        implementation 'com.google.guava:guava:28.1-jre'
+        implementation "com.google.guava:guava:${guavaVersion}-jre"
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-log4j2'
