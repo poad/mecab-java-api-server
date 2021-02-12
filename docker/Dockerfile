@@ -1,7 +1,6 @@
 ARG LLVM_VERSION=11
-ARG DIST_VERSION_CODE_NAME=focal
 
-FROM poad/docker-openjdk:11-zulu-${DIST_VERSION_CODE_NAME}
+FROM mcr.microsoft.com/java/jdk:11-zulu-ubuntu 
 
 ARG LLVM_VERSION
 ARG DIST_VERSION_CODE_NAME
@@ -15,7 +14,8 @@ USER root
 
 RUN apt-get update -qq \
  && apt-get upgrade -qqy \
- && apt-get install --no-install-recommends -qqy locales curl unzip ca-certificates gnupg \
+ && apt-get install --no-install-recommends -qqy locales curl unzip ca-certificates gnupg lsb-release \
+ && DIST_VERSION_CODE_NAME=$(lsb_release -cs) \
  && echo "deb http://apt.llvm.org/${DIST_VERSION_CODE_NAME}/ llvm-toolchain-${DIST_VERSION_CODE_NAME} main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
  && echo "deb http://apt.llvm.org/${DIST_VERSION_CODE_NAME}/ llvm-toolchain-${DIST_VERSION_CODE_NAME}-${LLVM_VERSION} main" >> /etc/apt/sources.list.d/llvm-toolchain.list \
  && curl -SL https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - \
