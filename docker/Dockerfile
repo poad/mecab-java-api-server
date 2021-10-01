@@ -1,4 +1,4 @@
-ARG LLVM_VERSION=12
+ARG LLVM_VERSION=13
 ARG DIST_VERSION_CODE_NAME=focal
 
 FROM mcr.microsoft.com/java/jdk:11-zulu-ubuntu 
