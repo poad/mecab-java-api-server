@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.guavaVersion = '30.1.1'
+    ext.guavaVersion = '31.1'
 }
 
 plugins {
@@ -20,9 +20,6 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_11
 
     repositories {
-        // Use jcenter for resolving dependencies.
-        // You can declare any Maven/Ivy/file repository here.
-        jcenter()
         mavenCentral()
     }
 
