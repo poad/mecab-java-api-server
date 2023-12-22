@@ -15,7 +15,7 @@ RUN curl -sSLo mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&i
     && curl -sSLo mecab-ipadic-2.7.0-20070801.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7MWVlSDBCSXZMTXM" \
     && curl -SLo mecab-java-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7NHo1bEJxd0RnSzg"
 
-FROM mcr.microsoft.com/java/jdk:21-zulu-ubuntu 
+FROM mcr.microsoft.com/openjdk/jdk:21-ubuntu 
 
 ARG LLVM_VERSION
 ARG DIST_VERSION_CODE_NAME
